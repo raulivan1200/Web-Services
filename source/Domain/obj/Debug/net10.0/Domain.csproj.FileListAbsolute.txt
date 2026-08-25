@@ -1,0 +1,12 @@
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/bin/Debug/net10.0/Domain.deps.json
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/bin/Debug/net10.0/Domain.dll
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/bin/Debug/net10.0/Domain.pdb
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/Domain.AssemblyInfoInputs.cache
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/Domain.AssemblyInfo.cs
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/Domain.csproj.CoreCompileInputs.cache
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/Domain.sourcelink.json
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/Domain.dll
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/refint/Domain.dll
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/Domain.pdb
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Domain/obj/Debug/net10.0/ref/Domain.dll

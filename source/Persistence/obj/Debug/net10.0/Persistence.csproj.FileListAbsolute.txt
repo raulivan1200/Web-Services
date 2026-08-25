@@ -1,0 +1,16 @@
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/bin/Debug/net10.0/Persistence.deps.json
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/bin/Debug/net10.0/Persistence.dll
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/bin/Debug/net10.0/Persistence.pdb
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/bin/Debug/net10.0/Domain.dll
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/bin/Debug/net10.0/Domain.pdb
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persistence.csproj.AssemblyReference.cache
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persistence.GeneratedMSBuildEditorConfig.editorconfig
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persistence.AssemblyInfoInputs.cache
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persistence.AssemblyInfo.cs
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persistence.csproj.CoreCompileInputs.cache
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persistence.sourcelink.json
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persiste.61C28332.Up2Date
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persistence.dll
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/refint/Persistence.dll
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/Persistence.pdb
+/Users/raulivanriveraperez/Documents/GitHub/Web Services/ActivitiesHub/source/Persistence/obj/Debug/net10.0/ref/Persistence.dll

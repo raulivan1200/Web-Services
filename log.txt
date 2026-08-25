@@ -1,0 +1,4 @@
+dotnet sln ActivitiesHub.slnx add source/API/API.csproj
+dotnet sln ActivitiesHub.slnx add source/Domain/Domain.csproj
+dotnet sln ActivitiesHub.slnx add source/Application/Application.csproj
+dotnet sln ActivitiesHub.slnx add source/Persistence/Persistence.csproj
