@@ -1,8 +1,8 @@
 <Solution>
-  <Folder Name="/source/">
-    <Project Path="source/API/API.csproj" />
-    <Project Path="source/Application/Application.csproj" />
-    <Project Path="source/Domain/Domain.csproj" />
-    <Project Path="source/Persistence/Persistence.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/API/API.csproj" />
+    <Project Path="src/Application/Application.csproj" />
+    <Project Path="src/Domain/Domain.csproj" />
+    <Project Path="src/Persistence/Persistence.csproj" />
   </Folder>
 </Solution>
