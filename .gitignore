@@ -10,12 +10,6 @@
 *.userosscache
 *.sln.docstates
 *.env
-*.db
-*.db-shm
-*.db-wal
-Library/
-.dotnet/
-.nuget/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -433,3 +427,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+*.db
+*.db-shm
+*.db-wal
