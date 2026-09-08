@@ -20,6 +20,14 @@ runtime:
           expect(res.getStatus()).to.equal(200);
         });
 
+        test("Response returns the requested event", function() {
+          const body = res.getBody();
+          expect(body.id).to.equal(bru.getVar("eventId"));
+          expect(body.title).to.be.a("string").and.not.to.be.empty;
+          expect(body.date).to.be.a("string");
+          expect(body.isCancelled).to.be.a("boolean");
+        });
+
 settings:
   encodeUrl: true
   timeout: 0
