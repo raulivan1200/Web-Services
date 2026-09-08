@@ -1,9 +1,17 @@
 using System.Reflection;
 using EventsHub.Api.Controllers;
+using EventsHub.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
+
+// The documentation host loads the real controllers but should not open the
+// API's SQLite database. This satisfies controller activation for the Swagger
+// host while keeping it isolated from the running API.
+services.AddDbContext<AppDbContext>(options =>
+    options.UseInMemoryDatabase("EventsHub.OpenApi"));
 
 services
     .AddOpenApiDocument(document =>

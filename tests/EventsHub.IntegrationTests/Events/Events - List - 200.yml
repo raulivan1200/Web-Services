@@ -19,6 +19,8 @@ runtime:
         test("Response returns an array", function() {
           const body = res.getBody();
           expect(body).to.be.an("array");
+          expect(body.length).to.be.greaterThan(0);
+          bru.setVar("eventId", body[0].id);
         });
 
 settings:
