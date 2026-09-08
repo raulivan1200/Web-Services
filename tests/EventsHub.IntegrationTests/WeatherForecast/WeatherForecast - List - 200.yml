@@ -22,6 +22,15 @@ runtime:
           expect(body.length).to.equal(5);
         });
 
+        test("Every forecast matches the expected contract", function() {
+          res.getBody().forEach(function(forecast) {
+            expect(Date.parse(forecast.date)).not.to.be.NaN;
+            expect(forecast.temperatureC).to.be.a("number");
+            expect(forecast.temperatureF).to.be.a("number");
+            expect(forecast.summary).to.be.a("string");
+          });
+        });
+
 settings:
   encodeUrl: true
   timeout: 0

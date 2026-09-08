@@ -19,8 +19,40 @@ runtime:
         test("Response returns an array", function() {
           const body = res.getBody();
           expect(body).to.be.an("array");
-          expect(body.length).to.be.greaterThan(0);
+          expect(body.length).to.equal(10);
           bru.setVar("eventId", body[0].id);
+        });
+
+        test("Every event matches the expected contract", function() {
+          const body = res.getBody();
+          const stringFields = [
+            "id", "title", "description", "category", "city", "venue",
+            "latitude", "longitude"
+          ];
+
+          body.forEach(function(event) {
+            stringFields.forEach(function(field) {
+              expect(event[field]).to.be.a("string").and.not.to.be.empty;
+            });
+            expect(event.isCancelled).to.be.a("boolean");
+            expect(Date.parse(event.date)).not.to.be.NaN;
+          });
+        });
+
+        test("Event IDs are unique", function() {
+          const body = res.getBody();
+          const ids = body.map(function(event) { return event.id; });
+          expect(new Set(ids).size).to.equal(ids.length);
+        });
+
+        test("Seed contains past and future events", function() {
+          const dates = res.getBody().map(function(event) {
+            return new Date(event.date).getTime();
+          });
+          const now = Date.now();
+
+          expect(dates.some(function(date) { return date < now; })).to.equal(true);
+          expect(dates.some(function(date) { return date > now; })).to.equal(true);
         });
 
 settings:
