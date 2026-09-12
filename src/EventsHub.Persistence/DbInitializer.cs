@@ -9,109 +9,49 @@ public static class DbInitializer
     {
         if (await context.Events.AnyAsync()) return;
 
-        var events = new List<Event>
+        var locations = new (string City, string Venue, string Latitude, string Longitude)[]
         {
-            new() {
-                Title = "Past Event 1",
-                Date = DateTime.Now.AddMonths(-1),
-                Description = "Event 1 months ago",
-                Category = "culture",
-                City = "Tinúm, Yucatán",
-                Venue = "Chichén Itzá",
-                Latitude = "20.6843",
-                Longitude = "-88.5678"
-            },
-            new() {
-                Title = "Past Event 2",
-                Date = DateTime.Now.AddMonths(-3),
-                Description = "Event 3 months ago",
-                Category = "music",
-                City = "San Juan Teotihuacán, Estado de México",
-                Venue = "Pirámide del Sol, Teotihuacán",
-                Latitude = "19.6925",
-                Longitude = "-98.8438"
-            },
-            new() {
-                Title = "Past Event 3",
-                Date = DateTime.Now.AddMonths(-5),
-                Description = "Event 5 months ago",
-                Category = "drinks",
-                City = "Ciudad de México",
-                Venue = "Zócalo (Plaza de la Constitución)",
-                Latitude = "19.4326",
-                Longitude = "-99.1332"
-            },
-            new() {
-                Title = "Past Event 4",
-                Date = DateTime.Now.AddMonths(-7),
-                Description = "Event 7 months ago",
-                Category = "culture",
-                City = "Ciudad de México",
-                Venue = "Palacio de Bellas Artes",
-                Latitude = "19.4352",
-                Longitude = "-99.1412"
-            },
-            new() {
-                Title = "Past Event 5",
-                Date = DateTime.Now.AddMonths(-9),
-                Description = "Event 9 months ago",
-                Category = "music",
-                City = "Cancún, Quintana Roo",
-                Venue = "Playa Delfines",
-                Latitude = "21.0997",
-                Longitude = "-86.7561"
-            },
-            new() {
-                Title = "Future Event 1",
-                Date = DateTime.Now.AddMonths(1),
-                Description = "Event 1 months in future",
-                Category = "drinks",
-                City = "Guanajuato, Guanajuato",
-                Venue = "Callejón del Beso",
-                Latitude = "21.0190",
-                Longitude = "-101.2574"
-            },
-            new() {
-                Title = "Future Event 2",
-                Date = DateTime.Now.AddMonths(2),
-                Description = "Event 2 months in future",
-                Category = "culture",
-                City = "Ciudad de México",
-                Venue = "Xochimilco (Trajineras)",
-                Latitude = "19.2828",
-                Longitude = "-99.1036"
-            },
-            new() {
-                Title = "Future Event 3",
-                Date = DateTime.Now.AddMonths(4),
-                Description = "Event 4 months in future",
-                Category = "music",
-                City = "Ciudad de México",
-                Venue = "Basílica de Guadalupe",
-                Latitude = "19.4847",
-                Longitude = "-99.1176"
-            },
-            new() {
-                Title = "Future Event 4",
-                Date = DateTime.Now.AddMonths(6),
-                Description = "Event 6 months in future",
-                Category = "drinks",
-                City = "Tulum, Quintana Roo",
-                Venue = "Zona Arqueológica de Tulum",
-                Latitude = "20.2114",
-                Longitude = "-87.4287"
-            },
-            new() {
-                Title = "Future Event 5",
-                Date = DateTime.Now.AddMonths(8),
-                Description = "Event 8 months in future",
-                Category = "culture",
-                City = "Guadalajara, Jalisco",
-                Venue = "Palacio de Gobierno de Jalisco",
-                Latitude = "20.6767",
-                Longitude = "-103.3475"
-            }
+            ("Tinúm, Yucatán", "Chichén Itzá", "20.6843", "-88.5678"),
+            ("San Juan Teotihuacán, Estado de México", "Pirámide del Sol, Teotihuacán", "19.6925", "-98.8438"),
+            ("Ciudad de México", "Zócalo (Plaza de la Constitución)", "19.4326", "-99.1332"),
+            ("Ciudad de México", "Palacio de Bellas Artes", "19.4352", "-99.1412"),
+            ("Cancún, Quintana Roo", "Playa Delfines", "21.0997", "-86.7561"),
+            ("Guanajuato, Guanajuato", "Callejón del Beso", "21.0190", "-101.2574"),
+            ("Ciudad de México", "Xochimilco (Trajineras)", "19.2828", "-99.1036"),
+            ("Ciudad de México", "Basílica de Guadalupe", "19.4847", "-99.1176"),
+            ("Tulum, Quintana Roo", "Zona Arqueológica de Tulum", "20.2114", "-87.4287"),
+            ("Guadalajara, Jalisco", "Palacio de Gobierno de Jalisco", "20.6767", "-103.3475"),
+            ("Aguascalientes, Aguascalientes", "Jardín de San Marcos", "21.8798", "-102.3023"),
+            ("Puebla, Puebla", "Catedral de Puebla", "19.0433", "-98.1980"),
+            ("Monterrey, Nuevo León", "Parque Fundidora", "25.6780", "-100.2850"),
+            ("Mérida, Yucatán", "Paseo de Montejo", "20.9870", "-89.6190"),
+            ("Querétaro, Querétaro", "Acueducto de Querétaro", "20.5960", "-100.3790")
         };
+
+        var categories = new[] { "culture", "music", "drinks", "food", "sports", "travel" };
+
+        var events = new List<Event>();
+
+        for (var i = 1; i <= 67; i++)
+        {
+            var isPast = i <= 34;
+            var offsetMonths = isPast ? -(35 - i) : (i - 34);
+            var loc = locations[(i - 1) % locations.Length];
+            var category = categories[(i - 1) % categories.Length];
+
+            events.Add(new Event
+            {
+                Title = isPast ? $"Past Event {i}" : $"Future Event {i - 34}",
+                Date = DateTime.Now.AddMonths(offsetMonths),
+                Description = isPast ? $"Event {35 - i} months ago" : $"Event {i - 34} months in future",
+                Category = category,
+                City = loc.City,
+                Venue = loc.Venue,
+                Latitude = loc.Latitude,
+                Longitude = loc.Longitude,
+                IsCancelled = i % 7 == 0
+            });
+        }
 
         context.Events.AddRange(events);
 
