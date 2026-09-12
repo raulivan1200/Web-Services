@@ -8,7 +8,7 @@ http:
   url: "{{baseUrl}}/events/:eventId"
   params:
     - name: eventId
-      value: 55a58d3c-efae-4674-8122-b4383195445a
+      value: "{{eventId}}"
       type: path
   auth: inherit
 
@@ -18,6 +18,14 @@ runtime:
       code: |-
         test("Status code is 200 OK", function() {
           expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Response returns the requested event", function() {
+          const body = res.getBody();
+          expect(body.id).to.equal(bru.getVar("eventId"));
+          expect(body.title).to.be.a("string").and.not.to.be.empty;
+          expect(body.date).to.be.a("string");
+          expect(body.isCancelled).to.be.a("boolean");
         });
 
 settings:

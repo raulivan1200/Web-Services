@@ -1,9 +1,14 @@
 using System.Reflection;
 using EventsHub.Api.Controllers;
+using EventsHub.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
+
+services.AddDbContext<AppDbContext>(options =>
+    options.UseInMemoryDatabase("EventsHub.OpenApi"));
 
 services
     .AddOpenApiDocument(document =>
