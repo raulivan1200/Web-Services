@@ -2,48 +2,48 @@
 
 [![CI](https://github.com/raulivan1200/Web-Services/actions/workflows/ci.yml/badge.svg)](https://github.com/raulivan1200/Web-Services/actions/workflows/ci.yml)
 
-ICI Web Services 2026 — EventsHub backend, OpenAPI client generation, Bruno
-integration requests, and the Vite/React starter app.
+School project (ICI 2026 01): a .NET 10 backend with a React frontend, kept as
+two independent apps in one repo — there is no shared build.
 
-## Requirements
+| Path | What it is | README |
+|---|---|---|
+| `src/EventsHub.Api` | ASP.NET Core Web API — the only backend piece in the runtime request path | [README](src/EventsHub.Api/README.md) |
+| `src/EventsHub.Application` | MediatR commands/queries and handlers (the use cases) | [README](src/EventsHub.Application/README.md) |
+| `src/EventsHub.Domain` | The `Event` entity | [README](src/EventsHub.Domain/README.md) |
+| `src/EventsHub.Persistence` | EF Core `AppDbContext`, migrations, seed data (SQLite) | [README](src/EventsHub.Persistence/README.md) |
+| `src/EventsHub.OpenApi` | Standalone host that generates the OpenAPI document and typed client | [README](src/EventsHub.OpenApi/README.md) |
+| `web/` | React 19 + Vite + MUI single-page app | [README](web/README.md) |
+| `tests/` | NUnit unit tests and a Bruno HTTP collection | see the Api README |
+| `docs/` | Architecture write-ups and course-material guides | [Architecture](docs/Architecture.md) |
 
-- .NET SDK 10.0.400 (or another .NET 10 SDK)
-- EF Core CLI 10.0.11 for creating or inspecting migrations:
+## How the pieces connect
 
-  ```sh
-  dotnet tool install --global dotnet-ef --version 10.0.11
-  ```
-
-- Node.js with npm for the optional `web/` Vite application
-- Bruno to run the integration collection interactively
-
-## Run the API
-
-```sh
-dotnet tool restore
-dotnet build EventsHub.slnx
-dotnet run --project src/EventsHub.Api/EventsHub.Api.csproj --launch-profile https
+```
+web (React)  --HTTP-->  EventsHub.Api  --MediatR-->  EventsHub.Application  -->  EventsHub.Persistence  -->  SQLite
+                         controllers                   handlers                    AppDbContext               eventshub.db
+                                                             \__ EventsHub.Domain (Event) used by every layer
+EventsHub.OpenApi --loads Api assembly--> OpenAPI JSON --NSwag--> typed client   (build-time only)
 ```
 
-The API starts at `https://localhost:5001`. On its first run it applies the
-SQLite migration and seeds ten events. The database files are intentionally
-ignored by Git.
+- A controller in `EventsHub.Api` builds a MediatR command or query and sends
+  it through `Mediator` (from `EventsHubBaseController`).
+- The matching handler in `EventsHub.Application` uses `AppDbContext`
+  directly (no repository layer) and returns `Event` objects, which are also
+  the API response shape.
+- `EventsHub.Api` references only `EventsHub.Application`; it reaches
+  `Persistence` and `Domain` through that project reference.
 
-## Integration requests
+## Quick start
 
-Open `tests/EventsHub.IntegrationTests/` in Bruno and select the `local`
-environment. Run the full collection: the Events list request captures a real
-seeded event ID for the following `Events - Get - 200` request.
+```powershell
+# backend (https://localhost:5001)
+dotnet run --project src/EventsHub.Api
 
-## OpenAPI client
-
-See [docs/OpenApi.md](docs/OpenApi.md) to regenerate the checked-in OpenAPI
-document and C# RPC client.
-
-## Vite app
-
-```sh
+# frontend (https://localhost:3000)
 cd web
-npm ci
+npm install
 npm run dev
 ```
+
+Other commands (build, tests, EF migrations, OpenAPI regeneration) are listed
+in the READMEs above and in [`CLAUDE.md`](CLAUDE.md).
