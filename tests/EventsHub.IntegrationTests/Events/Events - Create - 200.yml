@@ -27,13 +27,14 @@ runtime:
   scripts:
     - type: tests
       code: |-
-        test("Status code is 404 Not Found", function() {
-          expect(res.getStatus()).to.equal(404);
+        test("Status code is 200 OK", function() {
+          expect(res.getStatus()).to.equal(200);
         });
 
-        test("Response returns an array", function() {
-          const body = res.getBody();
-          expect(body).to.equal("The event was not found");
+        test("Response returns the created event ID", function() {
+          const id = res.getBody();
+          expect(id).to.be.a("string").and.not.to.be.empty;
+          bru.setVar("createdEventId", id);
         });
 
 settings:

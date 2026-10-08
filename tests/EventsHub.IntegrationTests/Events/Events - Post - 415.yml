@@ -1,7 +1,7 @@
 info:
-  name: Events - Post - 405
+  name: Events - Post - 415
   type: http
-  seq: 4
+  seq: 7
 
 http:
   method: POST
@@ -12,8 +12,8 @@ runtime:
   scripts:
     - type: tests
       code: |-
-        test("Unsupported method returns 405 Method Not Allowed", function() {
-          expect(res.getStatus()).to.equal(405);
+        test("Request without JSON content type returns 415 Unsupported Media Type", function() {
+          expect(res.getStatus()).to.equal(415);
         });
 
 settings:
