@@ -24,9 +24,10 @@ public class GetEventList
                     logger.LogInformation($"Task {i} has completed!");
                 }
             }
-            catch (Exception ex)
+            catch (OperationCanceledException)
             {
                 logger.LogInformation("Task was CANCELLED!");
+                throw;
             }
 
             return await context.Events.ToListAsync(cancellationToken);

@@ -16,7 +16,7 @@ public class DeleteEvent
         {
             var @event = await context.Events
                 .FindAsync([request.Id], cancellationToken)
-                ?? throw new Exception("Event not found");
+                ?? throw new KeyNotFoundException("The event was not found");
 
             context.Remove(@event);
 

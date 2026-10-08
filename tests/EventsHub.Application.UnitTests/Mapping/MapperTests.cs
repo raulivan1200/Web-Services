@@ -199,7 +199,7 @@ public class MapperTests
 
         foreach (var ex in new[] { ex1, ex2 })
         {
-            Assert.That(ex.Message, Does.Contain(nameof(Unrelated)).And.Contain(nameof(PersonView)));
+            Assert.That(ex!.Message, Does.Contain(nameof(Unrelated)).And.Contain(nameof(PersonView)));
         }
     }
 

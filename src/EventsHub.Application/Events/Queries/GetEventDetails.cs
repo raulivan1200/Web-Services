@@ -16,7 +16,7 @@ public class GetEventDetails
         public async Task<Event> Handle(Query request, CancellationToken cancellationToken)
         {
             var result = await context.Events.FindAsync([request.Id], cancellationToken)
-                            ?? throw new Exception("Activity not found");
+                            ?? throw new KeyNotFoundException("The event was not found");
             return result;
         }
     }

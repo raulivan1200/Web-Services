@@ -18,7 +18,7 @@ public class EditEvent
         {
             var @event = await context.Events
                 .FindAsync([request.Event.Id], cancellationToken)
-                ?? throw new Exception("Event not found");
+                ?? throw new KeyNotFoundException("The event was not found");
             
             mapper.Map(request.Event, @event);
 

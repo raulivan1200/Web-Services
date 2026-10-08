@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventsHub.Api.Controllers;
 
+[Produces("application/json")]
 public class EventsController : EventsHubBaseController
 {
     [HttpGet]
@@ -16,10 +17,17 @@ public class EventsController : EventsHubBaseController
 
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Event), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Event>> GetEventDetailAsync(string id)
     {
-        return await Mediator.Send(new GetEventDetails.Query { Id = id });
+        try
+        {
+            return await Mediator.Send(new GetEventDetails.Query { Id = id });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpPost]
@@ -33,19 +41,33 @@ public class EventsController : EventsHubBaseController
     [HttpPut]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> EditEventAsync(Event @event)
     {
-        await Mediator.Send(new EditEvent.Command { Event = @event });
-        return NoContent();
+        try
+        {
+            await Mediator.Send(new EditEvent.Command { Event = @event });
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteEvent(string id)
     {
-        await Mediator.Send(new DeleteEvent.Command { Id = id });
-        return Ok();
+        try
+        {
+            await Mediator.Send(new DeleteEvent.Command { Id = id });
+            return Ok();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }
