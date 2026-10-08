@@ -7,6 +7,6 @@ type Activity = {
     isCancelled: boolean;
     city: string;
     venue: string;
-    latitude: number;
-    longitude: number;
+    latitude: string;
+    longitude: string;
 }
