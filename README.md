@@ -37,7 +37,7 @@ seeded event ID for the following `Events - Get - 200` request.
 
 ## OpenAPI client
 
-See [docs/OpenApi.md](docs/OpenApi.md) to regenerate the checked-in OpenAPI
+See [docs/OpenApiSetup.md](docs/OpenApiSetup.md) to regenerate the checked-in OpenAPI
 document and C# RPC client.
 
 ## Vite app

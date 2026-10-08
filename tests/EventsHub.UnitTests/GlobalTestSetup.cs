@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventsHub.Persistence;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventsHub.UnitTests;
@@ -10,13 +11,18 @@ namespace EventsHub.UnitTests;
 [SetUpFixture]
 public class GlobalTestSetup
 {
+    private SqliteConnection _connection = null!;
+
     public static AppDbContext AppDbContext { get; private set; }
 
     [OneTimeSetUp]
     public async Task Setup()
     {
+        _connection = new SqliteConnection("Data Source=:memory:");
+        await _connection.OpenAsync();
+
         DbContextOptions<AppDbContext> options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlite("Data source=dating.db")
+            .UseSqlite(_connection)
             .Options;
 
         AppDbContext = new AppDbContext(options);
@@ -28,5 +34,6 @@ public class GlobalTestSetup
     public async Task TearDown()
     {
         await AppDbContext.DisposeAsync();
+        await _connection.DisposeAsync();
     }
 }

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, parcial01]
+    branches: [main, parcial01, parcial02, parcial02-tests]
   pull_request:
-    branches: [main, parcial01]
+    branches: [main, parcial01, parcial02, parcial02-tests]
 
 permissions:
   contents: read
@@ -27,6 +27,9 @@ jobs:
 
       - name: Build
         run: dotnet build EventsHub.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test EventsHub.slnx --configuration Release --no-build --no-restore
 
   frontend:
     name: Frontend
