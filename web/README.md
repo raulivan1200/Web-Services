@@ -22,7 +22,7 @@ cd web
 npm install
 npm run dev       # https://localhost:3000
 npm run build     # tsc -b && vite build
-npm run lint       # eslint .
+npm run lint      # eslint .
 npm run preview   # preview a production build
 ```
 
@@ -34,30 +34,32 @@ frontend calls that absolute URL directly.
 
 This is an early-stage app — worth knowing before extending it:
 
-- **`src/App.tsx`** fetches `https://localhost:5001/api/v1/events` with the
+- **`src/app/layout/App.tsx`** fetches `https://localhost:5001/api/v1/events` with the
   URL hardcoded inline (`axios.get<Activity[]>(...)`). There's no `.env` /
   `import.meta.env` base-URL config yet — if you add more API calls or need
   this to work against a non-`localhost:5001` backend, that's the first gap
   to close.
 - Only the list endpoint is used so far. The API also offers
-  `GET /Events/{id}`, `POST`, `PUT` and `DELETE` on the same route
+  `GET /api/v1/Events/{id}`, `POST`, `PUT` and `DELETE` under `/api/v1/Events`
   (handled by MediatR handlers in `EventsHub.Application`), but the UI does
   not call them yet. The generated typed client in `EventsHub.OpenApi` is
   not used by this app either.
 - **`src/lib/types/index.d.ts`** declares shared types as *ambient* `type`
   declarations (e.g. `Activity`, which mirrors the backend's `Event`
-  entity/DTO — the frontend hasn't been renamed to match yet). Note that
-  `Activity` types `latitude`/`longitude` as `number`, while the backend
-  `Event` stores them as `string`. Being a
+  entity/DTO — the frontend hasn't been renamed to match yet).
+  `Activity` types `latitude`/`longitude` as `string`, matching the backend
+  `Event`. Being a
   `.d.ts` ambient declaration file, these types are globally available with
   no `import` statement; add new shared types here the same way rather than
   introducing per-file local type definitions for shapes coming from the API.
 - No routing, no state management library, and no test setup yet — `App.tsx`
-  is the entire UI (a title + a flat MUI `List` of events).
+  manages the list and selection state; the dashboard renders activity
+  cards, the selected activity's details, and a static creation form.
 
 ## Project layout
 
-- `src/App.tsx` — the app's only component right now
+- `src/app/layout/` — `App.tsx`, navigation bar, and shared styles
+- `src/features/activities/` — dashboard, list, cards, and details
+- `src/features/form/` — static activity creation form
 - `src/lib/types/` — ambient shared TypeScript types
-- `src/assets/` — static assets bundled by Vite
-- `public/` — static assets served as-is (e.g. `favicon.svg`)
+- `public/images/categoryImages/` — category images served as-is

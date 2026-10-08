@@ -14,7 +14,7 @@ EventsHub is a school project (ICI 2026 01): a .NET 10 backend (Clean Architectu
 dotnet build EventsHub.slnx                 # build everything
 dotnet run --project src/EventsHub.Api      # run the API (https://localhost:5001)
 dotnet test tests/EventsHub.Application.UnitTests  # mapper tests (no database, no HTTP)
-dotnet test tests/EventsHub.UnitTests       # controller tests — currently does NOT compile (EventsControllerTests still calls new EventsController(AppDbContext))
+dotnet test tests/EventsHub.UnitTests       # controller tests through MediatR
 dotnet test tests/EventsHub.UnitTests --filter "FullyQualifiedName~EventsControllerTests"  # single fixture
 dotnet test tests/EventsHub.UnitTests --filter "Name=GetEventDetailAsync_WhenEventDoesntExist_ReturnsNotFound"  # single test
 ```
@@ -37,7 +37,7 @@ npm run lint      # eslint .
 
 ### OpenAPI client regeneration
 
-The typed RPC client is generated, not hand-written. Regenerate it after changing any controller/DTO shape (see `docs/BackendBuildSteps.md` step 8 for full detail):
+The typed RPC client is generated, not hand-written. Regenerate it after changing any controller/DTO shape (see `docs/guides/OpenApiSetup.md` for full detail):
 
 ```powershell
 dotnet run --project src/EventsHub.OpenApi/EventsHub.OpenApi.csproj --no-launch-profile --urls http://127.0.0.1:5011
@@ -52,9 +52,10 @@ dotnet tool run nswag run src/nswag/EventsHub.nswag
 
 ## Architecture
 
-Clean-Architecture-flavored layering, but `EventsHub.Application` is currently an unused placeholder project (no files) — controllers in the Api project call `AppDbContext` directly instead of going through an application/service layer.
+Clean-Architecture-flavored layering: controllers in the Api project send MediatR commands and queries to handlers in `EventsHub.Application`, which use `AppDbContext` directly.
 
 - **EventsHub.Domain** — POCO entities only (`Event`). No EF or ASP.NET references.
+- **EventsHub.Application** — MediatR commands, queries, and handlers, plus the custom mapper and `MappingProfiles` used when editing an event.
 - **EventsHub.Persistence** — `AppDbContext` (SQLite via `UseSqlite`), EF Core `Migrations/`, and `DbInitializer.SeedDataAsync` (idempotent — no-ops if `Events` table is non-empty; seeds 10 Mexican-venue events spanning past/future dates).
 - **EventsHub.Api** — ASP.NET Core Web API, controllers only. `Program.cs` runs `Database.MigrateAsync()` + `DbInitializer.SeedDataAsync` on every startup (wrapped in try/catch, logged, never rethrown — a DB error is silently logged and the app still starts serving with whatever schema exists). CORS is locked to `localhost:3000` (the Vite dev server) via `AllowAnyHeader().AllowAnyMethod().WithOrigins(...)`.
   - All controllers derive from `EventsHubBaseController` (`[Route("api/v1/[controller]")]`, `[ApiController]`), including `WeatherForecastController` — so routes are `api/v1/Events`, `api/v1/WeatherForecast`, etc. New controllers should follow the same base-class pattern rather than declaring their own route/attributes.
@@ -63,7 +64,7 @@ Clean-Architecture-flavored layering, but `EventsHub.Application` is currently a
 
 ### Frontend (`web/`)
 
-Vite + React 19 + MUI 9 + axios, TypeScript. Very early state — `App.tsx` fetches `https://localhost:5001/api/v1/events` directly with a hardcoded absolute URL (no env-based API base URL yet) and renders a flat list. Shared frontend types live in `web/src/lib/types/index.d.ts` as ambient `type` declarations (e.g. `Activity`, mirroring the backend `Event` entity/DTO) — no import statement needed, these are global ambient types.
+Vite + React 19 + MUI 9 + axios, TypeScript. Very early state — `web/src/app/layout/App.tsx` fetches `https://localhost:5001/api/v1/events` directly with a hardcoded absolute URL (no env-based API base URL yet) and renders an activity dashboard with cards, a selected activity's details, and a static creation form. Shared frontend types live in `web/src/lib/types/index.d.ts` as ambient `type` declarations (e.g. `Activity`, mirroring the backend `Event` entity/DTO) — no import statement needed, these are global ambient types.
 
 ### Testing conventions
 
@@ -72,8 +73,8 @@ Unit tests (`tests/EventsHub.UnitTests`) use NUnit, target the Api project's con
 ## Reference docs
 
 `docs/` contains course-material write-ups worth checking before assuming context:
-- `BackendBuildSteps.md` — full commit-by-commit reconstruction of how `src/` was built, including exact commands used for scaffolding, EF migrations, and the OpenAPI/NSwag pipeline.
-- `DbContextFundamentals.md`, `OpenApiSetup.md`, `SoftwareTestingFundamentals.md`, `GitInPracticeGuide.md` — supporting concept docs for this project's stack choices.
+- `Architecture.md` — the project's components and request flow.
+- `fundamentals/DbContextFundamentals.md`, `guides/OpenApiSetup.md`, `fundamentals/SoftwareTestingFundamentals.md`, `guides/GitInPracticeGuide.md` — supporting concept docs for this project's stack choices.
 
 ## graphify
 

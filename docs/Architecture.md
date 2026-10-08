@@ -17,7 +17,7 @@ graph LR
 
     subgraph "Backend (.NET 10)"
         Api["EventsHub.Api<br/>https://localhost:5001"]
-        App["EventsHub.Application<br/>(empty placeholder)"]
+        App["EventsHub.Application<br/>MediatR commands/queries, handlers"]
         Pers["EventsHub.Persistence<br/>AppDbContext, Migrations, seeding"]
         Dom["EventsHub.Domain<br/>Event entity"]
         OpenApi["EventsHub.OpenApi<br/>codegen-only host, :5011"]
@@ -26,7 +26,7 @@ graph LR
     Db[("SQLite<br/>eventshub.db")]
 
     Web -- "axios GET<br/>/api/v1/events" --> Api
-    Api --> App
+    Api -- "MediatR" --> App
     App --> Pers
     App --> Dom
     Pers --> Dom
@@ -45,23 +45,22 @@ runs alongside the real API.
 A typical read, end to end:
 
 1. The SPA's `App.tsx` fires `axios.get('https://localhost:5001/api/v1/events')`
-   on mount (`web/src/App.tsx`) — the base URL is currently hardcoded, not
+   on mount (`web/src/app/layout/App.tsx`) — the base URL is currently hardcoded, not
    read from an env var.
 2. The request hits `EventsController` (`src/EventsHub.Api/Controllers/EventsController.cs`),
    which derives from `EventsHubBaseController` and therefore answers at
    `api/v1/Events`.
-3. `EventsController` is constructed with `AppDbContext` injected directly
-   (primary-constructor DI) and queries `context.Events` with EF Core —
-   there is no service/repository layer in between, even though
-   `EventsHub.Application` exists in the project graph as if there should be
-   one.
+3. `EventsController` sends a `GetEventList.Query` through MediatR. The
+   matching handler in `EventsHub.Application` receives `AppDbContext`
+   through DI and queries `context.Events` with EF Core — there is no
+   repository layer in between.
 4. EF Core translates the LINQ query to SQL against the SQLite file
    `eventshub.db`, using the schema described by
    `src/EventsHub.Persistence/Migrations/`.
 5. The `Event` entity (`src/EventsHub.Domain/Event.cs`) is serialized
    straight back as JSON — it is simultaneously the persistence entity, the
-   domain model, and the API's response DTO. There is no separate DTO or
-   mapping layer.
+   domain model, and the API's response DTO. There is no separate response
+   DTO; the custom mapper copies `Event` properties when editing.
 6. CORS (`app.UseCors(...)` in `src/EventsHub.Api/Program.cs`) only allows
    `http://localhost:3000` / `https://localhost:3000`, i.e. exactly the Vite
    dev server — this is a dev-only setup, there's no environment-specific
@@ -80,26 +79,21 @@ months in the past to eight months in the future.
 The project layout is shaped like Clean Architecture — `Domain` at the
 center, `Persistence` and `Application` around it, `Api` as the outermost
 layer — and the `.csproj` reference graph enforces that shape:
-`Api → Application → {Domain, Persistence}`, `Persistence → Domain`. But the
-pattern is not actually followed in code:
+`Api → Application → {Domain, Persistence}`, `Persistence → Domain`. The
+request path follows this graph:
 
-- **`EventsHub.Application` is empty.** It has no files beyond its
-  `.csproj`. Its only role today is structural: because `Api` references
-  only `Application`, and project references are transitive, `Api` reaches
-  `Persistence`/`Domain` *through* `Application` without ever declaring a
-  direct reference to either. If `Application` were deleted, `Api`'s
-  `using EventsHub.Persistence;` in `Program.cs` would stop compiling.
-- **Controllers talk to EF Core directly.** `EventsController` injects
-  `AppDbContext` and writes LINQ queries inline — there's no service layer,
-  no repository abstraction, no MediatR/CQRS pipeline.
+- **`EventsHub.Application` contains the use cases.** MediatR commands and
+  queries are handled here, and their handlers use `AppDbContext` directly.
+  The custom mapper and `MappingProfiles` also live in this layer.
+- **Controllers send commands and queries through MediatR.**
+  `EventsController` gets `IMediator` through `EventsHubBaseController` —
+  there is no repository abstraction.
 - **No DTOs.** `Event` is used as-is for both persistence and the wire
   format.
 
 This should be read as an early-stage/teaching-project snapshot, not a
-finished design — new backend work should decide explicitly whether to
-start filling in `Application` (services, DTOs, mapping) or to keep the
-current direct-to-`Api` shape and drop the unused layer. Don't assume
-`Application` does something it doesn't.
+finished design — new backend work should keep use cases in `Application`
+and controllers thin.
 
 ## Generated vs. hand-maintained
 
@@ -111,8 +105,8 @@ current direct-to-`Api` shape and drop the unused layer. Don't assume
 | `src/openapi/EventsHub.v1.json` | NSwag, from `EventsHub.OpenApi`'s served doc | **Never hand-edit** |
 | `src/EventsHub.OpenApi/Generated/EventsHubRpcClient.generated.cs` | NSwag CLI | **Never hand-edit** |
 
-Full step-by-step provenance (exact commands used to scaffold every piece of
-`src/`) is in [`docs/BackendBuildSteps.md`](BackendBuildSteps.md).
+The OpenAPI/NSwag setup commands are in
+[`docs/guides/OpenApiSetup.md`](guides/OpenApiSetup.md).
 
 ## Cross-cutting conventions actually in use
 
@@ -121,12 +115,12 @@ Full step-by-step provenance (exact commands used to scaffold every piece of
   its own route — including `WeatherForecastController`, which is the
   unmodified ASP.NET template controller re-parented onto this base rather
   than removed.
-- **IDs:** the one entity that exists (`Event`) uses a client-generated
-  `Guid.NewGuid().ToString()` string as its primary key, not a
+- **IDs:** the one entity that exists (`Event`) uses a
+  `Guid.NewGuid().ToString()` string as its default primary key, not a
   database-generated integer.
 - **Nullability:** all five .NET projects have `Nullable` and
   `ImplicitUsings` enabled, targeting `net10.0`.
-- **Testing:** unit tests bypass HTTP entirely and call controllers
+- **Testing:** controller tests bypass HTTP entirely and call controllers
   in-process against a real (not mocked) shared SQLite context; there is a
   second, separate integration-test suite that *does* exercise real HTTP,
   but through Bruno, not `dotnet test`. See
@@ -139,7 +133,7 @@ Full step-by-step provenance (exact commands used to scaffold every piece of
 |---|---|---|
 | `src/EventsHub.Domain` | Entities (`Event`) | [README](../src/EventsHub.Domain/README.md) |
 | `src/EventsHub.Persistence` | EF Core `AppDbContext`, migrations, seeding | [README](../src/EventsHub.Persistence/README.md) |
-| `src/EventsHub.Application` | Unused placeholder layer | [README](../src/EventsHub.Application/README.md) |
+| `src/EventsHub.Application` | MediatR commands/queries, handlers, and custom mapper | [README](../src/EventsHub.Application/README.md) |
 | `src/EventsHub.Api` | The real ASP.NET Core Web API | [README](../src/EventsHub.Api/README.md) |
 | `src/EventsHub.OpenApi` | Standalone OpenAPI-doc/codegen host | [README](../src/EventsHub.OpenApi/README.md) |
 | `web/` | React + Vite + MUI frontend | [README](../web/README.md) |
