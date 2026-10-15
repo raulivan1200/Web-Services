@@ -64,7 +64,7 @@ Clean-Architecture-flavored layering: controllers in the Api project send Mediat
 
 ### Frontend (`web/`)
 
-Vite + React 19 + MUI 9 + axios, TypeScript. Very early state — `web/src/app/layout/App.tsx` fetches `https://localhost:5001/api/v1/events` directly with a hardcoded absolute URL (no env-based API base URL yet) and renders an activity dashboard with cards, a selected activity's details, and a static creation form. Shared frontend types live in `web/src/lib/types/index.d.ts` as ambient `type` declarations (e.g. `Activity`, mirroring the backend `Event` entity/DTO) — no import statement needed, these are global ambient types.
+Vite + React 19 + MUI 9 + axios, TypeScript. Very early state — `web/src/app/layout/App.tsx` fetches `https://localhost:5001/api/v1/events` on mount with a hardcoded absolute URL (no env-based API base URL yet) and renders an activity dashboard with cards, a selected activity's details, and a creation/editing form in `web/src/features/activities/form/`. Creating, editing, and deleting activities update React state only; changes are not persisted through the API and are lost on reload. Shared frontend types live in `web/src/lib/types/index.d.ts` as ambient `type` declarations (e.g. `Activity`, mirroring the backend `Event` entity/DTO) — no import statement needed, these are global ambient types.
 
 ### Testing conventions
 

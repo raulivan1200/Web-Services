@@ -39,7 +39,9 @@ This is an early-stage app — worth knowing before extending it:
   `import.meta.env` base-URL config yet — if you add more API calls or need
   this to work against a non-`localhost:5001` backend, that's the first gap
   to close.
-- Only the list endpoint is used so far. The API also offers
+- Only the list endpoint is used for the initial load. Creating, editing,
+  and deleting activities update React state only; these changes are lost
+  on reload. The API also offers
   `GET /api/v1/Events/{id}`, `POST`, `PUT` and `DELETE` under `/api/v1/Events`
   (handled by MediatR handlers in `EventsHub.Application`), but the UI does
   not call them yet. The generated typed client in `EventsHub.OpenApi` is
@@ -54,12 +56,12 @@ This is an early-stage app — worth knowing before extending it:
   introducing per-file local type definitions for shapes coming from the API.
 - No routing, no state management library, and no test setup yet — `App.tsx`
   manages the list and selection state; the dashboard renders activity
-  cards, the selected activity's details, and a static creation form.
+  cards, the selected activity's details, and a creation/editing form.
 
 ## Project layout
 
 - `src/app/layout/` — `App.tsx`, navigation bar, and shared styles
 - `src/features/activities/` — dashboard, list, cards, and details
-- `src/features/form/` — static activity creation form
+- `src/features/activities/form/` — activity creation/editing form
 - `src/lib/types/` — ambient shared TypeScript types
 - `public/images/categoryImages/` — category images served as-is
