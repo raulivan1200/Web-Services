@@ -19,7 +19,14 @@ export default function ActivityForm({ activity, closeForm, submitForm }: Props)
 
         if (activity) data.id = activity.id;
 
-        submitForm(data as unknown as Activity);
+        submitForm({
+            id: "",
+            isCancelled: false,
+            latitude: "",
+            longitude: "",
+            ...activity,
+            ...data
+        } as Activity);
     }
 
     return (
@@ -31,7 +38,7 @@ export default function ActivityForm({ activity, closeForm, submitForm }: Props)
                 <TextField name="title" label="Title" defaultValue={activity?.title} />
                 <TextField name="description" label="Description" defaultValue={activity?.description} multiline rows={3} />
                 <TextField name="category" label="Category" defaultValue={activity?.category} />
-                <TextField name="date" label="Date" defaultValue={activity?.date} type="date" />
+                <TextField name="date" label="Date" defaultValue={activity?.date.slice(0, 10)} type="date" />
                 <TextField name="city" label="City" defaultValue={activity?.city} />
                 <TextField name="venue" label="Venue" defaultValue={activity?.venue} />
                 <Box sx={{ display: 'flex', justifyContent: 'end', gap: 3 }}>

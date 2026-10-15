@@ -42,6 +42,7 @@ export default function ActivityDashboard({
                 }
                 {editMode &&
                     <ActivityForm
+                        key={selectedActivity?.id ?? 'new'}
                         closeForm={closeForm}
                         activity={selectedActivity}
                         submitForm={submitForm} />

@@ -18,6 +18,7 @@ function App() {
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.find(act => act.id === id));
+    setEditMode(false);
   }
 
   const handleCancelSelectActivity = () => {
@@ -42,7 +43,7 @@ function App() {
       setActivities(activities.map(act => act.id === activity.id ? activity : act))
     }
     else {
-      const newActivity = { ...activity, id: activities.length.toString() }
+      const newActivity = { ...activity, id: crypto.randomUUID() }
       setSelectedActivity(newActivity)
       setActivities([...activities, newActivity])
     }
@@ -51,6 +52,10 @@ function App() {
 
   const handleDeleteActivity = (id: string) => {
     setActivities(activities.filter(act => act.id !== id));
+    if (selectedActivity?.id === id) {
+      handleCancelSelectActivity();
+      setEditMode(false);
+    }
   }
 
   return (
