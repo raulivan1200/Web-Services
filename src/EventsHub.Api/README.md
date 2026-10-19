@@ -65,7 +65,14 @@ local `eventshub.db` file, created/migrated automatically on startup.
 
 ## Testing
 
-Two test suites cover this project:
+The solution has three test suites:
+
+- **`tests/EventsHub.Application.UnitTests`** (NUnit) — verifies the custom
+  mapper and its mapping profiles. Run with:
+
+  ```powershell
+  dotnet test tests/EventsHub.Application.UnitTests
+  ```
 
 - **`tests/EventsHub.UnitTests`** (NUnit) — calls the controllers in-process
   through MediatR, using a SQLite in-memory `AppDbContext` created and seeded
@@ -82,6 +89,8 @@ Two test suites cover this project:
   a `local.yml` environment) that exercises the API over real HTTP. Run it
   with the Bruno CLI or app against a running `dotnet run` instance; it is
   separate from `dotnet test`.
+
+Run both NUnit projects together with `dotnet test EventsHub.slnx`.
 
 ## Regenerating the OpenAPI client
 
