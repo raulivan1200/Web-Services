@@ -26,10 +26,10 @@ It only needs the controllers' routes and the `Event` type to describe them
 (see `AddControllersAsServices()` and the `Moq` package in its `.csproj`).
 It references `EventsHub.Api` and, through it, `Application` and `Domain`.
 
-The committed `src/openapi/EventsHub.v1.json` currently lists list, get,
-create and edit for `Events` plus `WeatherForecast`, but not the delete
-action that `EventsController` now has, so it (and the generated client) is
-out of date. Regenerate as described below after changing a route or the
+The committed `src/openapi/EventsHub.v1.json` lists all five `Events`
+operations (list, get by id, create, edit, and delete) plus
+`GET /api/v1/WeatherForecast`. The generated client also includes the delete
+operation. Regenerate both as described below after changing a route or the
 `Event` shape in `Domain`.
 
 Runs on its own launch profile (`https://localhost:5011;http://localhost:5010`)

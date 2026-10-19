@@ -11,10 +11,10 @@ package: `MediatR` 14.2.0. Object mapping is done by a small in-house mapper
 | File | Request | Handler behavior |
 |---|---|---|
 | `Events/Queries/GetEventList.cs` | `Query` → `List<Event>` | Returns `context.Events.ToListAsync(...)`. Also runs a 10-iteration loop that logs progress and checks the cancellation token (a leftover cancellation-token demo). |
-| `Events/Queries/GetEventDetails.cs` | `Query { Id }` → `Event` | `FindAsync(Id)`; throws `Exception("Activity not found")` if missing. |
+| `Events/Queries/GetEventDetails.cs` | `Query { Id }` → `Event` | `FindAsync(Id)`; throws `KeyNotFoundException("The event was not found")` if missing. |
 | `Events/Commands/CreateEvent.cs` | `Command { Event }` → `string` | Adds the event, saves, returns its `Id`. No validation. |
-| `Events/Commands/EditEvent.cs` | `Command { Event }` | Finds the event by `Event.Id` (throws `Exception("Event not found")` if missing), copies fields onto it with `IMapper`, saves. |
-| `Events/Commands/DeleteEvent.cs` | `Command { Id }` | Finds the event (throws `Exception("Event not found")` if missing), removes it, saves. |
+| `Events/Commands/EditEvent.cs` | `Command { Event }` | Finds the event by `Event.Id` (throws `KeyNotFoundException("The event was not found")` if missing), copies fields onto it with `IMapper`, saves. |
+| `Events/Commands/DeleteEvent.cs` | `Command { Id }` | Finds the event (throws `KeyNotFoundException("The event was not found")` if missing), removes it, saves. |
 | `Core/MappingProfiles.cs` | — | Mapping profile with one map, `Event` → `Event`, used by `EditEvent`. |
 | `Core/Mapping/` | — | The in-house mapper: `IMapper`, `Mapper`, `Profile`, and the `AddMapper` registration extension. |
 
@@ -92,7 +92,6 @@ The example above is compiled and tested in
 
 ## Known rough edges
 
-- "Not found" is signalled with a plain `Exception`, and no exception-handling
-  middleware is registered in `Program.cs`. Missing ids therefore surface as
-  unhandled server errors rather than the `404` the controller's
-  `ProducesResponseType` attributes declare.
+- The handlers use `KeyNotFoundException` for missing events. The detail,
+  edit, and delete controller actions catch it and return `404`; other
+  exceptions have no general exception-handling middleware in `Program.cs`.
