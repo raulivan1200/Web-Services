@@ -1,0 +1,40 @@
+info:
+  name: Events - Edit - 404
+  type: http
+  seq: 10
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/events"
+  body:
+    type: json
+    data: |-
+      {
+        "id": "event-that-does-not-exist-in-bruno-tests",
+        "title": "Missing event",
+        "date": "2030-10-24T18:00:00Z",
+        "description": "This event is not stored",
+        "category": "integration-test",
+        "isCancelled": false,
+        "city": "Test city",
+        "venue": "Test venue",
+        "latitude": "21.0997",
+        "longitude": "-86.7561"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Editing an unknown event returns 404 Not Found", function() {
+          expect(res.getStatus()).to.equal(404);
+          expect(res.getBody()).to.equal("The event was not found");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

@@ -1,0 +1,41 @@
+info:
+  name: Events - Get Edited - 200
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{baseUrl}}/events/:eventId"
+  params:
+    - name: eventId
+      value: "{{createdEventId}}"
+      type: path
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 200 OK", function() {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Edited fields are persisted and unchanged fields remain", function() {
+          const body = res.getBody();
+          expect(body.id).to.equal(bru.getVar("createdEventId"));
+          expect(body.title).to.equal("Updated by Bruno integration test");
+          expect(body.description).to.equal("Updated event content for the Bruno CRUD sequence");
+          expect(body.category).to.equal("edited-integration-test");
+          expect(body.city).to.equal("Updated test city");
+          expect(body.venue).to.equal("Updated test venue");
+          expect(body.isCancelled).to.equal(true);
+          expect(body.latitude).to.equal("21.0997");
+          expect(body.longitude).to.equal("-86.7561");
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

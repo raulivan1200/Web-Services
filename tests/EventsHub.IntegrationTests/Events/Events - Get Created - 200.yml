@@ -1,0 +1,39 @@
+info:
+  name: Events - Get Created - 200
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{baseUrl}}/events/:eventId"
+  params:
+    - name: eventId
+      value: "{{createdEventId}}"
+      type: path
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status code is 200 OK", function() {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("Created event was persisted with its submitted values", function() {
+          const body = res.getBody();
+          expect(body.id).to.equal(bru.getVar("createdEventId"));
+          expect(body.title).to.equal("Created by Bruno integration test");
+          expect(body.description).to.equal("Initial event content for the Bruno CRUD sequence");
+          expect(body.category).to.equal("integration-test");
+          expect(body.city).to.equal("Initial test city");
+          expect(body.venue).to.equal("Initial test venue");
+          expect(body.isCancelled).to.equal(false);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

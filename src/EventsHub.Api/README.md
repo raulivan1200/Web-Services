@@ -77,8 +77,10 @@ The solution has three test suites:
 - **`tests/EventsHub.UnitTests`** (NUnit) — calls the controllers in-process
   through MediatR, using a SQLite in-memory `AppDbContext` created and seeded
   once per run (`[SetUpFixture] GlobalTestSetup`). The current tests cover
-  listing events, retrieving an existing event, and returning `404` for a
-  missing event. Run with:
+  listing events, propagating list-query cancellation, retrieving existing
+  and missing events, and the create/edit/delete controller paths (including
+  persistence checks and `404` for edits/deletes of unknown IDs). Each mutating
+  test uses its own event ID and removes its row during cleanup. Run with:
 
   ```powershell
   dotnet test tests/EventsHub.UnitTests
@@ -86,9 +88,11 @@ The solution has three test suites:
 
 - **`tests/EventsHub.IntegrationTests`** — a [Bruno](https://www.usebruno.com/)
   collection (`.yml` requests under `Events/` and `WeatherForecast/`, plus
-  a `local.yml` environment) that exercises the API over real HTTP. Run it
-  with the Bruno CLI or app against a running `dotnet run` instance; it is
-  separate from `dotnet test`.
+  a `local.yml` environment) that exercises the API over real HTTP. The Events
+  sequence verifies reading after create, reading updated values and preserved
+  fields after edit, deletion followed by a `404`, and `404` responses for
+  unknown edits/deletes. Run it with the Bruno CLI or app against a running
+  `dotnet run` instance; it is separate from `dotnet test`.
 
 Run both NUnit projects together with `dotnet test EventsHub.slnx`.
 

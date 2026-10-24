@@ -1,6 +1,6 @@
-import { Box, Container, CssBaseline } from "@mui/material";
+import { Alert, Box, CircularProgress, Container, CssBaseline } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import NavBar from "./NavBar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
 
@@ -8,12 +8,27 @@ function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    axios.get<Activity[]>('https://localhost:5001/api/v1/events')
-      .then(response => setActivities(response.data));
+    const controller = new AbortController();
 
-    return () => { };
+    const loadActivities = async () => {
+      try {
+        const response = await axios.get<Activity[]>('https://localhost:5001/api/v1/events', {
+          signal: controller.signal,
+        });
+        setActivities(response.data);
+      } catch (error) {
+        if (!axios.isCancel(error)) setLoadError(true);
+      } finally {
+        if (!controller.signal.aborted) setIsLoading(false);
+      }
+    };
+
+    void loadActivities();
+    return () => controller.abort();
   }, []);
 
   const handleSelectActivity = (id: string) => {
@@ -40,18 +55,18 @@ function App() {
   const handleSubmitForm = (activity: Activity) => {
     if (activity.id) {
       setSelectedActivity(activity)
-      setActivities(activities.map(act => act.id === activity.id ? activity : act))
+      setActivities(current => current.map(act => act.id === activity.id ? activity : act))
     }
     else {
       const newActivity = { ...activity, id: crypto.randomUUID() }
       setSelectedActivity(newActivity)
-      setActivities([...activities, newActivity])
+      setActivities(current => [...current, newActivity])
     }
     setEditMode(false);
   }
 
   const handleDeleteActivity = (id: string) => {
-    setActivities(activities.filter(act => act.id !== id));
+    setActivities(current => current.filter(act => act.id !== id));
     if (selectedActivity?.id === id) {
       handleCancelSelectActivity();
       setEditMode(false);
@@ -61,18 +76,23 @@ function App() {
   return (
     <Box sx={{ bgcolor: '#eeeeee' }}>
       <CssBaseline />
-      <NavBar openForm={handleOpenForm} />
+      <NavBar openForm={handleOpenForm} disabled={isLoading} />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        <ActivityDashboard
-          activities={activities}
-          selectActivity={handleSelectActivity}
-          cancelSelectActivity={handleCancelSelectActivity}
-          selectedActivity={selectedActivity}
-          editMode={editMode}
-          openForm={handleOpenForm}
-          closeForm={handleFormClose}
-          submitForm={handleSubmitForm}
-          deleteActivity={handleDeleteActivity} />
+        {isLoading ? <CircularProgress aria-label="Loading activities" /> : (
+          <>
+            {loadError && <Alert severity="error">Activities could not be loaded. You can still create activities in this session.</Alert>}
+            <ActivityDashboard
+              activities={activities}
+              selectActivity={handleSelectActivity}
+              cancelSelectActivity={handleCancelSelectActivity}
+              selectedActivity={selectedActivity}
+              editMode={editMode}
+              openForm={handleOpenForm}
+              closeForm={handleFormClose}
+              submitForm={handleSubmitForm}
+              deleteActivity={handleDeleteActivity} />
+          </>
+        )}
       </Container>
     </Box>
   )

@@ -1,7 +1,7 @@
 info:
   name: Events - Edit - 204
   type: http
-  seq: 5
+  seq: 6
 
 http:
   method: PUT
@@ -11,13 +11,13 @@ http:
     data: |-
       {
         "id": "{{createdEventId}}",
-        "title": "{{$randomCatchPhrase}}",
-        "date": "{{$randomDateFuture}}",
-        "description": "{{$randomLoremParagraph}}",
-        "category": "music",
-        "isCancelled": false,
-        "city": "{{$randomCity}}",
-        "venue": "{{$randomStreetName}}",
+        "title": "Updated by Bruno integration test",
+        "date": "2031-10-24T18:00:00Z",
+        "description": "Updated event content for the Bruno CRUD sequence",
+        "category": "edited-integration-test",
+        "isCancelled": true,
+        "city": "Updated test city",
+        "venue": "Updated test venue",
         "latitude": "21.0997",
         "longitude": "-86.7561"
       }

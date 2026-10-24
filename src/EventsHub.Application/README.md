@@ -10,7 +10,7 @@ package: `MediatR` 14.2.0. Object mapping is done by a small in-house mapper
 
 | File | Request | Handler behavior |
 |---|---|---|
-| `Events/Queries/GetEventList.cs` | `Query` → `List<Event>` | Returns `context.Events.ToListAsync(...)`. Also runs a 10-iteration loop that logs progress and checks the cancellation token (a leftover cancellation-token demo). |
+| `Events/Queries/GetEventList.cs` | `Query` → `List<Event>` | Returns `context.Events.ToListAsync(cancellationToken)` and propagates cancellation to EF Core. |
 | `Events/Queries/GetEventDetails.cs` | `Query { Id }` → `Event` | `FindAsync(Id)`; throws `KeyNotFoundException("The event was not found")` if missing. |
 | `Events/Commands/CreateEvent.cs` | `Command { Event }` → `string` | Adds the event, saves, returns its `Id`. No validation. |
 | `Events/Commands/EditEvent.cs` | `Command { Event }` | Finds the event by `Event.Id` (throws `KeyNotFoundException("The event was not found")` if missing), copies fields onto it with `IMapper`, saves. |

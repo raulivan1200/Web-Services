@@ -18,11 +18,11 @@ public class EventsController : EventsHubBaseController
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Event>> GetEventDetailAsync(string id)
+    public async Task<ActionResult<Event>> GetEventDetailAsync(string id, CancellationToken cancellationToken = default)
     {
         try
         {
-            return await Mediator.Send(new GetEventDetails.Query { Id = id });
+            return await Mediator.Send(new GetEventDetails.Query { Id = id }, cancellationToken);
         }
         catch (KeyNotFoundException ex)
         {
@@ -33,20 +33,20 @@ public class EventsController : EventsHubBaseController
     [HttpPost]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> CreateEventAsync(Event @event)
+    public async Task<ActionResult<string>> CreateEventAsync(Event @event, CancellationToken cancellationToken = default)
     {
-        return await Mediator.Send(new CreateEvent.Command { Event = @event });
+        return await Mediator.Send(new CreateEvent.Command { Event = @event }, cancellationToken);
     }
 
     [HttpPut]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> EditEventAsync(Event @event)
+    public async Task<ActionResult> EditEventAsync(Event @event, CancellationToken cancellationToken = default)
     {
         try
         {
-            await Mediator.Send(new EditEvent.Command { Event = @event });
+            await Mediator.Send(new EditEvent.Command { Event = @event }, cancellationToken);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
@@ -58,11 +58,11 @@ public class EventsController : EventsHubBaseController
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteEvent(string id)
+    public async Task<ActionResult> DeleteEvent(string id, CancellationToken cancellationToken = default)
     {
         try
         {
-            await Mediator.Send(new DeleteEvent.Command { Id = id });
+            await Mediator.Send(new DeleteEvent.Command { Id = id }, cancellationToken);
             return Ok();
         }
         catch (KeyNotFoundException ex)

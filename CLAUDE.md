@@ -33,6 +33,7 @@ cd web
 npm run dev       # Vite dev server, https://localhost:3000 (mkcert-issued cert)
 npm run build     # tsc -b && vite build
 npm run lint      # eslint .
+npm test          # type-check tests and run the React/Vitest regression suites
 ```
 
 ### OpenAPI client regeneration

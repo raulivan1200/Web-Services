@@ -32,17 +32,17 @@ export default function ActivityForm({ activity, closeForm, submitForm }: Props)
     return (
         <Paper sx={{ borderRadius: 3, padding: 3 }}>
             <Typography variant="h5" gutterBottom color="primary">
-                Create activity
+                {activity ? "Edit activity" : "Create activity"}
             </Typography>
             <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <TextField name="title" label="Title" defaultValue={activity?.title} />
-                <TextField name="description" label="Description" defaultValue={activity?.description} multiline rows={3} />
-                <TextField name="category" label="Category" defaultValue={activity?.category} />
-                <TextField name="date" label="Date" defaultValue={activity?.date.slice(0, 10)} type="date" />
-                <TextField name="city" label="City" defaultValue={activity?.city} />
-                <TextField name="venue" label="Venue" defaultValue={activity?.venue} />
+                <TextField name="title" label="Title" defaultValue={activity?.title} required />
+                <TextField name="description" label="Description" defaultValue={activity?.description} multiline rows={3} required />
+                <TextField name="category" label="Category" defaultValue={activity?.category} required />
+                <TextField name="date" label="Date" defaultValue={activity?.date.slice(0, 10)} type="date" required />
+                <TextField name="city" label="City" defaultValue={activity?.city} required />
+                <TextField name="venue" label="Venue" defaultValue={activity?.venue} required />
                 <Box sx={{ display: 'flex', justifyContent: 'end', gap: 3 }}>
-                    <Button onClick={closeForm} color="inherit">Cancel</Button>
+                    <Button type="button" onClick={closeForm} color="inherit">Cancel</Button>
                     <Button type="submit" color="success" variant="contained">Submit</Button>
                 </Box>
             </Box>

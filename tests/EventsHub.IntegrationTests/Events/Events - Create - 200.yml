@@ -11,13 +11,13 @@ http:
     data: |-
       {
         "id": "{{$guid}}",
-        "title": "{{$randomCatchPhrase}}",
-        "date": "{{$randomDateFuture}}",
-        "description": "{{$randomLoremParagraph}}",
-        "category": "music",
+        "title": "Created by Bruno integration test",
+        "date": "2030-10-24T18:00:00Z",
+        "description": "Initial event content for the Bruno CRUD sequence",
+        "category": "integration-test",
         "isCancelled": false,
-        "city": "{{$randomCity}}",
-        "venue": "{{$randomStreetName}}",
+        "city": "Initial test city",
+        "venue": "Initial test venue",
         "latitude": "21.0997",
         "longitude": "-86.7561"
       }
